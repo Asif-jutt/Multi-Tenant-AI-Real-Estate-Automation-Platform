@@ -21,31 +21,34 @@ import {
   UserPlus,
   LogIn,
   Eye,
-  Tag
+  Tag,
+  LayoutDashboard
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface PublicMarketplaceProps {
   onSwitchToAgencyDashboard?: () => void;
 }
 
 export const PublicMarketplace: React.FC<PublicMarketplaceProps> = ({ onSwitchToAgencyDashboard }) => {
-  const { properties, user, setIsAuthModalOpen, setAuthViewTab, addToast } = useApp();
+  const { user, properties, addToast, setIsAuthModalOpen, setAuthViewTab } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedPriceRange, setSelectedPriceRange] = useState('all');
+  const [selectedCity, setSelectedCity] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>('all');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
 
-  // Filter properties across all organizations
+  // Filter properties in real-time
   const filteredProperties = properties.filter((p) => {
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.city.toLowerCase().includes(searchQuery.toLowerCase());
+      p.title.toLowerCase().includes(q) ||
+      p.location.toLowerCase().includes(q) ||
+      (p.ownerAgent && p.ownerAgent.toLowerCase().includes(q));
 
     const matchesCity = selectedCity === 'all' || p.city.toLowerCase() === selectedCity.toLowerCase();
     const matchesType = selectedType === 'all' || p.propertyType === selectedType;
@@ -58,7 +61,7 @@ export const PublicMarketplace: React.FC<PublicMarketplaceProps> = ({ onSwitchTo
     return matchesSearch && matchesCity && matchesType && matchesPrice;
   });
 
-  const isAuthenticated = user.role !== 'customer' && user.id !== 'guest-001';
+  const isAuthenticated = user.id !== 'guest-001';
 
   const handleInquire = (property: Property) => {
     setSelectedProperty(property);
@@ -138,12 +141,20 @@ export const PublicMarketplace: React.FC<PublicMarketplaceProps> = ({ onSwitchTo
                 </button>
               </>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="px-4 py-2.5 rounded-2xl bg-emerald-950/90 border border-emerald-700/80 backdrop-blur-md text-emerald-300 text-xs font-bold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Signed in as {user.name} ({user.organizationName})</span>
+                  <span>Signed in as {user.name} ({user.role === 'customer' ? 'Buyer Account' : user.organizationName})</span>
                 </div>
-                {onSwitchToAgencyDashboard && (
+                {user.role === 'customer' ? (
+                  <Link
+                    href="/customer/dashboard"
+                    className="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold flex items-center gap-2 shadow-lg transition-all"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span>My Customer Dashboard</span>
+                  </Link>
+                ) : onSwitchToAgencyDashboard ? (
                   <button
                     onClick={onSwitchToAgencyDashboard}
                     className="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold flex items-center gap-2 shadow-lg transition-all"
@@ -151,7 +162,7 @@ export const PublicMarketplace: React.FC<PublicMarketplaceProps> = ({ onSwitchTo
                     <Building2 className="w-4 h-4" />
                     <span>Go to Agency Operations Dashboard</span>
                   </button>
-                )}
+                ) : null}
               </div>
             )}
           </div>
