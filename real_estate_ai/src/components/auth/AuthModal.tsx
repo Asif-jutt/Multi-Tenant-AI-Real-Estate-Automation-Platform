@@ -16,25 +16,14 @@ export const AuthModal: React.FC = () => {
     user
   } = useApp();
 
-  const [email, setEmail] = useState('admin@alrehman.com');
-  const [password, setPassword] = useState('Admin123!');
-  const [orgName, setOrgName] = useState('Kingdom Heights Realty');
-  const [firstName, setFirstName] = useState('Hamza');
-  const [lastName, setLastName] = useState('Sharif');
+  const [email, setEmail] = useState('asifhussain5115@gmail.com');
+  const [password, setPassword] = useState('11111111');
+  const [orgName, setOrgName] = useState('EstateFlow Prime Real Estate');
+  const [firstName, setFirstName] = useState('Asif');
+  const [lastName, setLastName] = useState('Hussain');
   const [loading, setLoading] = useState(false);
 
   if (!isAuthModalOpen) return null;
-
-  const handleQuickLogin = async (demoEmail: string, demoPass: string) => {
-    setLoading(true);
-    try {
-      await loginUser(demoEmail, demoPass);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFormLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +66,7 @@ export const AuthModal: React.FC = () => {
             </div>
             <div>
               <h3 className="text-base font-extrabold text-white">EstateFlow AI Authentication</h3>
-              <p className="text-xs text-slate-400">Sign in, register new agency, or switch role accounts</p>
+              <p className="text-xs text-slate-400">Sign in to your agency workspace or register a new organization</p>
             </div>
           </div>
           <button
@@ -112,54 +101,6 @@ export const AuthModal: React.FC = () => {
         </div>
 
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
-          {/* Quick One-Click Role Switcher */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-purple-400" />
-              <span>Quick One-Click Role Login</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => handleQuickLogin('admin@alrehman.com', 'Admin123!')}
-                className="p-2.5 rounded-xl bg-purple-950/50 hover:bg-purple-900/60 border border-purple-800 text-left transition-all group"
-              >
-                <div className="font-bold text-purple-300 group-hover:text-white flex items-center justify-between">
-                  <span>Owner / Admin</span>
-                  <CheckCircle className="w-3.5 h-3.5 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">admin@alrehman.com</div>
-              </button>
-
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => handleQuickLogin('agent@alrehman.com', 'Agent123!')}
-                className="p-2.5 rounded-xl bg-indigo-950/50 hover:bg-indigo-900/60 border border-indigo-800 text-left transition-all group"
-              >
-                <div className="font-bold text-indigo-300 group-hover:text-white flex items-center justify-between">
-                  <span>Agent</span>
-                  <CheckCircle className="w-3.5 h-3.5 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">agent@alrehman.com</div>
-              </button>
-
-              <button
-                type="button"
-                disabled={loading}
-                onClick={() => handleQuickLogin('viewer@alrehman.com', 'Viewer123!')}
-                className="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition-all group"
-              >
-                <div className="font-bold text-slate-300 group-hover:text-white flex items-center justify-between">
-                  <span>Viewer</span>
-                  <CheckCircle className="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="text-[10px] text-slate-400 mt-0.5">viewer@alrehman.com</div>
-              </button>
-            </div>
-          </div>
-
           {/* LOGIN FORM */}
           {authViewTab === 'login' && (
             <form onSubmit={handleFormLogin} className="space-y-4">
