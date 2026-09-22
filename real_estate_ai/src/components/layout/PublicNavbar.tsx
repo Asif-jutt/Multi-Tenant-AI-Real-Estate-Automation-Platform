@@ -2,11 +2,15 @@
 
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, Globe, Sun, Moon, LogIn, UserPlus, Search } from 'lucide-react';
+import { Sparkles, Globe, Sun, Moon, LogIn, UserPlus, Search, LayoutDashboard, LogOut, Building2 } from 'lucide-react';
 import Link from 'next/link';
 
 export const PublicNavbar: React.FC = () => {
-  const { language, setLanguage, theme, toggleTheme, setIsAuthModalOpen, setAuthViewTab, setIsSearchOpen } = useApp();
+  const { language, setLanguage, theme, toggleTheme, setIsAuthModalOpen, setAuthViewTab, setIsSearchOpen, user, logoutUser } = useApp();
+
+  const isGuest = user.id === 'guest-001';
+  const isCustomer = user.role === 'customer' && !isGuest;
+  const isStaff = !isGuest && !isCustomer;
 
   return (
     <header className="sticky top-0 z-40 h-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 md:px-8 flex items-center justify-between transition-colors shadow-sm">
@@ -30,9 +34,12 @@ export const PublicNavbar: React.FC = () => {
         <Link href="/" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-1 border-b-2 border-purple-600 dark:border-purple-500 text-purple-600 dark:text-white font-extrabold">
           All Properties
         </Link>
-        <Link href="/customer/properties" className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-1">
-          Explore Cities
-        </Link>
+        {isCustomer && (
+          <Link href="/customer/dashboard" className="text-purple-600 dark:text-purple-400 hover:text-purple-700 font-bold transition-colors py-1 flex items-center gap-1.5">
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>My Buyer Dashboard</span>
+          </Link>
+        )}
         <span className="text-slate-300 dark:text-slate-700">•</span>
         <button
           onClick={() => setIsSearchOpen(true)}
@@ -66,30 +73,70 @@ export const PublicNavbar: React.FC = () => {
 
         <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block" />
 
-        {/* Sign In Button */}
-        <button
-          onClick={() => {
-            setAuthViewTab('login');
-            setIsAuthModalOpen(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-900 dark:text-white text-xs font-extrabold border border-slate-300 dark:border-slate-700/80 transition-all shadow-sm"
-        >
-          <LogIn className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-          <span>Sign In</span>
-        </button>
+        {/* Auth Buttons or Logged-in User Navigation */}
+        {isGuest ? (
+          <>
+            <button
+              onClick={() => {
+                setAuthViewTab('login');
+                setIsAuthModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-900 dark:text-white text-xs font-extrabold border border-slate-300 dark:border-slate-700/80 transition-all shadow-sm"
+            >
+              <LogIn className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Sign In</span>
+            </button>
 
-        {/* Register Agency / Sign Up Button */}
-        <button
-          onClick={() => {
-            setAuthViewTab('register');
-            setIsAuthModalOpen(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/30 transition-all"
-        >
-          <UserPlus className="w-3.5 h-3.5" />
-          <span>Register Agency</span>
-        </button>
+            <button
+              onClick={() => {
+                setAuthViewTab('register');
+                setIsAuthModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold shadow-lg shadow-purple-900/30 transition-all"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Sign Up / Register</span>
+            </button>
+          </>
+        ) : isCustomer ? (
+          <div className="flex items-center gap-2">
+            <Link
+              href="/customer/dashboard"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold shadow-md transition-all"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span>My Customer Dashboard</span>
+            </Link>
+
+            <button
+              onClick={() => logoutUser()}
+              className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 hover:bg-rose-200 dark:hover:bg-rose-900 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link
+              href="/properties"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow-md transition-all"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Agency Console</span>
+            </Link>
+
+            <button
+              onClick={() => logoutUser()}
+              className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 hover:bg-rose-200 dark:hover:bg-rose-900 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
 };
+
