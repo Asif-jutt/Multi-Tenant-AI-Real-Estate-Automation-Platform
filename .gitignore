@@ -1,0 +1,38 @@
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+real_estate_ai/.env*.local
+
+# Python virtual environment & cache
+backend/venv/
+backend/.venv/
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+
+# Node.js & Next.js
+real_estate_ai/node_modules/
+real_estate_ai/.next/
+real_estate_ai/out/
+real_estate_ai/build/
+node_modules/
+.next/
+
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
